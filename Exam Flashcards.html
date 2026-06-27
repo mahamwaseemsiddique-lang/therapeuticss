@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/Users/Waseem%20Siddique/Desktop/therapeutics.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface-2: #f0eeea;
+    --text: #1a1a18;
+    --text-muted: #6b6a66;
+    --text-hint: #a09f9b;
+    --border: #e2e0da;
+    --accent: #2d6be4;
+    --accent-bg: #eef3fd;
+    --accent-text: #1a4fba;
+    --success: #1a7a4a;
+    --success-bg: #eaf6f0;
+    --danger: #b83232;
+    --danger-bg: #fdeaea;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+  header { width: 100%; max-width: 640px; margin-bottom: 1.5rem; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  header h1 { font-size: 24px; font-weight: 600; }
+  header p { font-size: 14px; color: var(--text-muted); }
+  .topic-tabs { width: 100%; max-width: 640px; display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .tab { padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); }
+  .tab.active { background: var(--accent-bg); color: var(--accent-text); border-color: var(--accent); }
+  .progress-row { width: 100%; max-width: 640px; display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+  .progress-bar { flex: 1; height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
+  .progress-label { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+  .card-scene { width: 100%; max-width: 920px; perspective: 1200px; margin-bottom: 1rem; cursor: pointer; }
+  .card-inner { position: relative; width: 100%; min-height: 620px; transform-style: preserve-3d; transition: transform 0.5s ease; }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face { position: absolute; inset: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 2.4rem; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+  .card-face.back { transform: rotateY(180deg); }
+  .card-label { font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 0.8rem; }
+  .card-body { font-size: 12px; font-weight: 500; line-height: 1.7; color: var(--text); flex: 1; display: flex; align-items: flex-start; overflow-y: auto; min-height: 0; padding-right: 0.5rem; }
+  .card-body p { width: 100%; margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+  .card-hint { font-size: 15px; color: var(--text-hint); border-top: 1px solid var(--border); padding-top: 0.8rem; margin-top: 1rem; text-align: center; }
+  .topic-badge { display: inline-block; font-size: 11px; font-weight: 600; background: var(--accent-bg); color: var(--accent-text); padding: 3px 10px; border-radius: 999px; margin-bottom: 0.75rem; }
+  .controls { width: 100%; max-width: 640px; display: flex; justify-content: space-between; gap: 8px; margin-bottom: 1rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .assess-row { width: 100%; max-width: 640px; display: flex; gap: 10px; margin-bottom: 1rem; }
+  .assess-btn { flex: 1; padding: 10px; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); text-align: center; }
+  .assess-btn.got { border-color: var(--success); color: var(--success); background: var(--success-bg); }
+  .assess-btn.missed { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+  .score-strip { width: 100%; max-width: 640px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .score-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; text-align: center; }
+  .score-box .label { font-size: 11px; color: var(--text-hint); margin-bottom: 2px; }
+  .score-box .value { font-size: 20px; font-weight: 700; }
+  .score-box .value.green { color: var(--success); }
+  .score-box .value.red { color: var(--danger); }
+  .done-screen { width: 100%; max-width: 640px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 2rem; text-align: center; }
+  .done-screen h2 { margin-bottom: 0.5rem; }
+  .done-screen p { color: var(--text-muted); margin-bottom: 1rem; }
+  .big-score { font-size: 48px; font-weight: 700; color: var(--accent); margin: 0.5rem 0 1rem; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Therapeutics</h1>
+    <p>Tap the card to flip it and test yourself.</p>
+  </div>
+  <button class="btn" onclick="shuffleDeck()">↺ Shuffle</button>
+</header>
+
+<div class="topic-tabs" id="topic-tabs"><button class="tab active" onclick="setFilter(&#39;All&#39;)">All</button><button class="tab" onclick="setFilter(&#39;therapeutics&#39;)">therapeutics</button></div>
+<div class="progress-row">
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <span class="progress-label" id="progress-label">1 / 9</span>
+</div>
+<div id="main-area">
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div>
+            <span class="topic-badge">therapeutics</span>
+            <div class="card-label">Question</div>
+            <div class="card-body"><p>what are maitlands grades of oscillations</p></div>
+          </div>
+          <div class="card-hint">Tap to reveal the answer</div>
+        </div>
+        <div class="card-face back">
+          <div>
+            <div class="card-label">Answer</div>
+            <div class="card-body"><p>Grade I - small amplitude movement at the beginning of the range (pain and spasm)
+Grade II - large amplitude movement within the midrange of the movement (pain and spasm)
+Grade III - large amplitude movement at the end of the range (into restriction)
+Grade IV - small amplitude movement at end range when tissue resistance (not pain) is limiting
+Grade V - small amplitude, quick thrust manipulation at end range</p></div>
+          </div>
+          <div class="card-hint">How did you do?</div>
+        </div>
+      </div>
+    </div>
+    <div class="assess-row" style="visibility:hidden; pointer-events:none">
+      <button class="assess-btn got" onclick="event.stopPropagation(); assess(&#39;got&#39;)">✓ Got it</button>
+      <button class="assess-btn missed" onclick="event.stopPropagation(); assess(&#39;missed&#39;)">✗ Missed it</button>
+    </div>
+    <div class="controls">
+      <button class="btn" onclick="event.stopPropagation(); prev()" disabled="">← Previous</button>
+      <button class="btn" onclick="event.stopPropagation(); skipCard()">Skip →</button>
+    </div></div>
+<div class="score-strip">
+  <div class="score-box"><div class="label">Seen</div><div class="value" id="s-seen">0</div></div>
+  <div class="score-box"><div class="label">Got it</div><div class="value green" id="s-got">0</div></div>
+  <div class="score-box"><div class="label">Missed</div><div class="value red" id="s-missed">0</div></div>
+</div>
+
+<script>
+const ALL_CARDS = [
+  {
+    topic: "therapeutics",
+    q: "what are maitlands grades of oscillations",
+    a: `Grade I - small amplitude movement at the beginning of the range (pain and spasm)
+Grade II - large amplitude movement within the midrange of the movement (pain and spasm)
+Grade III - large amplitude movement at the end of the range (into restriction)
+Grade IV - small amplitude movement at end range when tissue resistance (not pain) is limiting
+Grade V - small amplitude, quick thrust manipulation at end range`
+  },
+  {
+    topic: "therapeutics",
+    q: "what are the joint play techniques of katlenborn",
+    a: `Grade I (loosen): Small-amplitude distraction is applied where no stress is placed on the capsule. It equalizes cohesive forces, muscle tension, and atmospheric pressure acting on the joint
+Grade II (tighten): Enough distraction or glide is applied to tighten the tissues around the joint
+Grade III (stretch): A distraction or glide is applied with an amplitude large enough to place stretch on the joint capsule and surrounding per articular structures.`
+  },
+  {
+    topic: "therapeutics",
+    q: "what are types of ROM",
+    a: `When a patient is able to contract the muscles actively without any assistance, active ROM is used.
+When patient has weak muscles and unable to move a joint through the desired range, assisted ROM is used.
+When a segment of the body is immobilized, active ROM is used above and below the immobilized segment to maintain the normal condition as much as possible.`
+  },
+  {
+    topic: "therapeutics",
+    q: "what is the SAID principle of resistance exercise",
+    a: `The SAID principle suggests that the body adapts specifically to the demands placed on it.
+It is an extension of Wolff's law.
+This principle helps therapists determine the exercise prescription to create specific training effects that meet functional needs and goals.`
+  },
+  {
+    topic: "therapeutics",
+    q: "potential benefits of training exercise",
+    a: `Enhanced muscle performance
+Restoration, improvement of muscle strength, power, and endurance
+Greater BMD or less bone demineralization
+Decreased stress on joints during physical activity
+Reduced risk of soft tissue injury during physical activity`
+  },
+  {
+    topic: "therapeutics",
+    q: "what is overload principle",
+    a: `A guiding principle on which the use of resistance exercise to improve muscle performance is based is the overload principle.
+If muscle performance is to improve, a load that exceeds the metabolic capacity of the muscle must be applied.
+The muscle must be challenged to perform at a level greater than that to which it is accustomed.
+If the demands remain constant after the muscle has adapted, the level of muscle performance can be maintained but not increased.`
+  },
+  {
+    topic: "therapeutics",
+    q: "difference between manipulation and mobilization",
+    a: `Mobilization uses slow, rhythmic movements within a joint's normal limits. Manipulation is a fast, forceful thrust that takes a joint beyond its typical passive limit, often producing a pop.`
+  },
+  {
+    topic: "therapeutics",
+    q: "what is continuous passive motion",
+    a: `CPM stands for Continuous Passive Motion. It refers to the use of motorized machines that gently and repetitively move a joint such as the knee, elbow, or hip through a preset range of motion without the patient needing to exert any muscle effort.`
+  },
+  {
+    topic: "therapeutics",
+    q: "application of AROM",
+    a: `Demonstrate the desired motion using PROM, then ask the patient to perform the motion.
+Place your hands in position to assist and guide the patient if needed.
+Provide assistance only as needed for smooth motion when there is weakness.
+The motion is performed within the available range.`
+  }
+];
+let current = 0;
+let flipped = false;
+let scores = {};
+let activeFilter = "All";
+
+const topics = () => ["All", ...new Set(ALL_CARDS.map(c => c.topic))];
+let deck = [];
+function getFiltered() { return activeFilter === "All" ? ALL_CARDS : ALL_CARDS.filter(c => c.topic === activeFilter); }
+function shuffleDeck() { deck = [...getFiltered()].sort(() => Math.random() - 0.5); current = 0; flipped = false; render(); }
+function setFilter(f) { activeFilter = f; deck = [...getFiltered()]; current = 0; flipped = false; renderTabs(); render(); }
+function renderTabs() { document.getElementById("topic-tabs").innerHTML = topics().map(t => `<button class="tab${activeFilter===t?" active":""}" onclick="setFilter('${t}')">${t}</button>`).join(""); }
+function updateStats() {
+  const seen = Object.keys(scores).length;
+  const got = Object.values(scores).filter(v => v === "got").length;
+  const missed = Object.values(scores).filter(v => v === "missed").length;
+  document.getElementById("s-seen").textContent = seen;
+  document.getElementById("s-got").textContent = got;
+  document.getElementById("s-missed").textContent = missed;
+  const pct = deck.length ? (current / deck.length) * 100 : 0;
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-label").textContent = `${Math.min(current + 1, deck.length)} / ${deck.length}`;
+}
+function render() {
+  const area = document.getElementById("main-area");
+  if (!deck.length) { area.innerHTML = '<p style="color:var(--text-muted);">No cards found.</p>'; return; }
+  if (current >= deck.length) {
+    const got = Object.values(scores).filter(v => v === "got").length;
+    const total = deck.length;
+    area.innerHTML = `<div class="done-screen"><h2>Deck complete!</h2><p>You have reviewed all ${total} cards.</p><div class="big-score">${got}/${total}</div><p>Self-assessed correct answers</p><button class="btn" onclick="restartDeck()">↺ Restart deck</button></div>`;
+    updateStats();
+    return;
+  }
+  const card = deck[current];
+  area.innerHTML = `
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-inner${flipped ? " flipped" : ""}">
+        <div class="card-face front">
+          <div>
+            <span class="topic-badge">${card.topic}</span>
+            <div class="card-label">Question</div>
+            <div class="card-body"><p>${card.q}</p></div>
+          </div>
+          <div class="card-hint">Tap to reveal the answer</div>
+        </div>
+        <div class="card-face back">
+          <div>
+            <div class="card-label">Answer</div>
+            <div class="card-body"><p>${card.a}</p></div>
+          </div>
+          <div class="card-hint">How did you do?</div>
+        </div>
+      </div>
+    </div>
+    <div class="assess-row" style="${flipped ? "" : "visibility:hidden; pointer-events:none"}">
+      <button class="assess-btn got" onclick="event.stopPropagation(); assess('got')">✓ Got it</button>
+      <button class="assess-btn missed" onclick="event.stopPropagation(); assess('missed')">✗ Missed it</button>
+    </div>
+    <div class="controls">
+      <button class="btn" onclick="event.stopPropagation(); prev()" ${current === 0 ? "disabled" : ""}>← Previous</button>
+      <button class="btn" onclick="event.stopPropagation(); skipCard()">Skip →</button>
+    </div>`;
+  updateStats();
+}
+function flipCard() { flipped = !flipped; const inner = document.querySelector('.card-inner'); if (inner) inner.classList.toggle('flipped', flipped); }
+function assess(val) { const card = deck[current]; scores[card.q] = val; current++; flipped = false; render(); }
+function skipCard() { current++; flipped = false; render(); }
+function prev() { if (current > 0) { current--; flipped = false; render(); } }
+function restartDeck() { scores = {}; current = 0; flipped = false; render(); }
+
+deck = [...ALL_CARDS];
+renderTabs();
+render();
+</script>
+
+
+</body></html>
